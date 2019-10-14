@@ -16,53 +16,140 @@
     <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
     <script>
         //預設資料
-        var dat1 = [
-            ['Eric', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Eric', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Eric', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Eric', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Eric', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Eric', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Eric', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Eric', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Eric', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Eric', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Eric', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Eric', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Eric', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
+        var dat = [
+            ['Eric', '0912345678', '1980/1/1', 'eric@gmail.com', '台北市光復南路179號13樓'],
         ];
 
-        //預設資料
-        var dat2 = [
-            ['Amy', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Amy', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Amy', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Amy', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Amy', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Amy', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Amy', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Amy', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Amy', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Amy', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Amy', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Amy', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-            ['Amy', '1980/1/1', '0912345678', 'eric@gmail.com', '台北市光復南路179號13樓'],
-        ];
-
-
-        $(document).ready(function () {
-
-            $('#Button1').click(function (e) {
-                MyTable1.clear();
-                MyTable1.rows.add(dat2);
-                MyTable1.draw();
-
+        $(function () {
+            //hook button event
+            $('#ButtonAddNew').click(ButtonAddNew);
+            $('#ButtonDelete').click(ButtonDelete);
+            $('#ButtonUpdate').click(ButtonUpdate);
+            $('#ButtonImport').click(ButtonImport);
+            $('#ButtonShowImport').click(ButtonShowImport);
+            $('#ButtonShowExport').click(ButtonShowExport);
+            //set up data table
+            DataTable = $('#Table1').DataTable({
+                data: dat
             });
-            MyTable1 = $('#Table1').DataTable({
-                data: dat1
-            }); 
+            //參考: https://datatables.net/examples/advanced_init/events_live.html
+            //event on 選取特定row
+            $('#Table1 tbody').on('click', 'tr', function () {
+                CurrentEditItem = DataTable.row(this).data();
+                $('#ModalEdit').modal();
+                $('#EditField_Name').val(CurrentEditItem[0]);
+                $('#EditField_Birthday').val(CurrentEditItem[1]);
+                $('#EditField_TEL').val(CurrentEditItem[2]);
+                $('#EditField_Email').val(CurrentEditItem[3]);
+                $('#EditField_Address').val(CurrentEditItem[4]);
+                //alert('You clicked on ' + data[0] + '\'s row');
+            });
+            LoadData();
         });
+
+        //編輯刪除
+        function ButtonDelete() {
+            var n = dat.indexOf(CurrentEditItem);
+            dat.splice(n, 1);
+            refreshData();
+            SaveData();
+        }
+
+        //編輯更新
+        function ButtonUpdate() {
+            var newItem = [
+                $('#EditField_Name').val(),
+                $('#EditField_Birthday').val(),
+                $('#EditField_TEL').val(),
+                $('#EditField_Email').val(),
+                $('#EditField_Address').val()
+            ];
+
+            var n = dat.indexOf(CurrentEditItem);
+            dat[n] = newItem;
+
+            refreshData();
+            SaveData();
+        }
+
+        function ButtonShowExport() {
+            //取得當前資料的JSON
+            var str = JSON.stringify(dat);
+            //填入 
+            $('#field_DataJSON').val(str);
+            $('#field_DataJSON').attr('readonly', 'readonly');
+            $('#ButtonImport').attr('disabled', 'true');
+            //顯示
+            $('#ModalDataExport').modal();
+        }
+
+        function ButtonShowImport() {
+            $('#field_DataJSON').val('');
+            $('#field_DataJSON').attr('readonly', false);
+            $('#ButtonImport').removeAttr("disabled");
+            $('#ModalDataExport').modal();
+        }
+
+        //匯出Modal內的匯出Button
+        function ButtonImport() {
+            dat = JSON.parse($('#field_DataJSON').val());
+            refreshData();
+            SaveData();
+        }
+
+        //refresh data table
+        function refreshData() {
+            DataTable.clear();
+            DataTable.rows.add(dat);
+            DataTable.draw();
+        }
+
+        //載入資料
+        function LoadData() {
+            if (localStorage.getItem('AddressBook') != null) {
+                var str = localStorage.getItem('AddressBook');
+                //取回資料
+                dat = JSON.parse(str);
+            }
+            refreshData();
+        }
+
+        //儲存資料
+        function SaveData() {
+            var str = JSON.stringify(dat);
+            localStorage.setItem('AddressBook', str);
+        }
+
+        //具體執行新增
+        function ButtonAddNew() {
+            //取得資料
+            var item = [
+                $('#field_Name').val(),
+                $('#field_Birthday').val(),
+                $('#field_TEL').val(),
+                $('#field_Email').val(),
+                $('#field_Address').val()
+            ];
+            dat.push(item);
+            //儲存
+            SaveData();
+            //clear
+            $('#field_Name').val('');
+            $('#field_Birthday').val('');
+            $('#field_TEL').val('');
+            $('#field_Email').val('');
+            $('#field_Address').val('');
+
+            LoadData();
+        }
+
+        //跳出新增Modal
+        function ButtonAddNewWindow() {
+            $('#ModalAddNew').modal();
+        }
     </script>
+
+    <!--button style-->
     <style>
         .btn {
             margin: 5px;
@@ -70,10 +157,12 @@
     </style>
 </head>
 
+
 <body>
+    <!--NavBar-->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
 
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand" href="#">資料表</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -81,10 +170,14 @@
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto" style="margin: 10px;">
-                <button class="btn btn-sm btn-outline-danger" type="button" id="ButtonShowAddNewWindow"
-                    data-toggle="modal" data-target="#AddModal">新增</button>
-                <button class="btn btn-sm btn-outline-secondary" type="button" id="ButtonShowImport">匯入</button>
-                <button class="btn btn-sm btn-outline-secondary" type="button" id="ButtonShowExport">匯出</button></ul>
+                <button class="btn btn-sm btn-outline-danger" type="button" id="ButtonAddNewWindow" data-toggle="modal"
+                    data-target="#ModalAddNew">新增</button>
+
+                <button class="btn btn-sm btn-outline-secondary" type="button" id="ButtonShowImport" data-toggle="modal"
+                    data-target="#ModalDataExport">匯入</button>
+                <button class="btn btn-sm btn-outline-secondary" type="button" id="ButtonShowExport" data-toggle="modal"
+                    data-target="#ModalDataExport">匯出</button>
+            </ul>
             <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
@@ -92,28 +185,102 @@
         </div>
     </nav>
 
-    <!-- Modal -->
-    <div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog" role="document">
+    <!-- 新增畫面 -->
+    <div class="modal fade" id="ModalAddNew">
+        <div class="modal-dialog">
             <div class="modal-content">
+                <!-- Modal Header -->
                 <div class="modal-header">
-                    <h5 class="modal-title" id="AddModalLabel">Modal title</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <h4 class="modal-title">新增</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
+                <!-- Modal body -->
                 <div class="modal-body">
-                    ...
+                    <form>
+                        <label>姓名</label>
+                        <input id="field_Name" type="text" class="form-control" />
+                        <label>生日</label>
+                        <input id="field_Birthday" type="datetime" class="form-control" />
+                        <label>電話</label>
+                        <input id="field_TEL" type="tel" class="form-control" />
+                        <label>email</label>
+                        <input id="field_Email" type="email" class="form-control" />
+                        <label>地址</label>
+                        <input id="field_Address" type="address" class="form-control" />
+                    </form>
                 </div>
+                <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button id="ButtonAddNew" type="button" class="btn btn-sm btn-outline-success">新增</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-dismiss="modal">關閉</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 資料匯出匯入Modal -->
+    <div class="modal fade" id="ModalDataExport">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">資料匯出匯入</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <textarea id="field_DataJSON" class="form-control" cols="60" rows="10"></textarea>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button id="ButtonImport" type="button" class="btn btn-sm btn-outline-success"
+                        data-dismiss="modal">匯出</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger" data-dismiss="modal">關閉</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- 編輯Modal-->
+    <div class="modal fade" id="ModalEdit">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">修改或刪除</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <form>
+                        <label>姓名</label>
+                        <input id="EditField_Name" type="text" class="form-control" />
+                        <label>生日</label>
+                        <input id="EditField_Birthday" type="datetime" class="form-control" />
+                        <label>電話</label>
+                        <input id="EditField_TEL" type="tel" class="form-control" />
+                        <label>email</label>
+                        <input id="EditField_Email" type="email" class="form-control" />
+                        <label>地址</label>
+                        <input id="EditField_Address" type="address" class="form-control" />
+                    </form>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button id="ButtonUpdate" type="button" class="btn btn-sm btn-outline-success"
+                        data-dismiss="modal">儲存</button>
+                    <button id="ButtonDelete" type="button" class="btn btn-sm btn-outline-danger"
+                        data-dismiss="modal">刪除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table-->
     <div class="container">
         <div class="row" style="margin: 10px">
             <div class="col-lg-12">
@@ -127,8 +294,8 @@
                             <th>地址</th>
                         </tr>
                     </thead>
-                    <!-- <tbody>
-                        <tr>
+                    <tbody>
+                        <!-- <tr>
                             <td>Tiger Nixon</td>
                             <td>System Architect</td>
                             <td>Edinburgh</td>
@@ -215,9 +382,9 @@
                     </tbody>
                 </table>
             </div>
-            <button id="Button1" class="btn btn-outline-success my-2 my-sm-0" type="submit">新增</button>
         </div>
     </div>
 
 </body>
+
 </html>

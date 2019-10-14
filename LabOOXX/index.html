@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>OOXX</title>
+    <style>
+        td
+        {
+            text-align: center;
+            cursor: pointer;
+
+        }
+    </style>
+    <script>
+        var flag = "";
+        
+    function SetPoint(obj)
+     {
+         if (obj.innerText !="_") return;
+         if(flag == "X")
+         {
+         obj.innerText = 'O';
+         flag = "O";
+         }
+         else
+         {
+         obj.innerText = 'X';
+         flag = "X";
+         }
+     }
+    </script>
+
+</head>
+<body >
+    <div style="font-size: 80px">
+        <table  border="1" id='table1' style=" width: 300px; height: 300px; table-layout : fixed;" >
+               
+                <tr>
+                        <td id = "c1" onclick="SetPoint(this)">_</td>
+                        <td id = "c2" onclick="SetPoint(this)">_</td>
+                        <td id = "c3" onclick="SetPoint(this)">_</td>
+                      </tr>
+                      <tr>
+                        <td id = "c4" onclick="SetPoint(this)">_</td>
+                        <td id = "c5" onclick="SetPoint(this)">_</td>
+                        <td id = "c6" onclick="SetPoint(this)">_</td>
+                      </tr>
+                       <tr>
+                        <td id = "c7" onclick="SetPoint(this)">_</td>
+                        <td id = "c8" onclick="SetPoint(this)">_</td>
+                        <td id = "c9" onclick="SetPoint(this)">_</td>
+                      </tr>
+                    
+                
+                 
+               
+              </table>
+            </div>
+</body>
+</html>

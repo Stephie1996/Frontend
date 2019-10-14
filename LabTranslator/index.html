@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+
+<script>
+    function whenSuccess(response) {
+        //呼叫遠端服務後的回傳結果
+        console.log(response);
+        $('#text2').val(response[0].translations[1].text);
+    }
+
+    function ButtonTranslate() {
+        var source = $('#text1').val();
+        var LanguageOption = $('LanguageOption').val();
+        $.ajax({
+            type: "post", //http verb
+            headers: {
+                //http header
+                "Ocp-Apim-Subscription-Key": "ea23947751b148409e4ea4a9c287c71c",
+                "Content-Type": "application/json"
+            },
+            url: `https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=${'LanguageOption'}`,
+            data: JSON.stringify([{
+                "Text": source //擁有Text的物件 轉成json字串
+            }]), //要翻譯的文字
+            dataType: "json",
+            success: whenSuccess
+            //success: function (response) {
+            //呼叫遠端服務後的回傳結果
+            //  console.log(response);
+            //$('#text2').val(response[0].translations[1].text);
+            //}
+        });
+    }
+    //當頁面載入完成後
+    $(document).ready(function () {
+        
+        $('#ButtonTranslate').click(function (e) {
+            ButtonTranslate();
+        })
+    });
+</script>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="card border-dark mb-3" style="max-width: 18rem; margin: 10px;">
+                <div class="card-header">
+                    <label for="exampleFormControlSelect1">翻譯</label>
+                    <select class="form-control" id="LanguageOption">
+                        <option value="0" selected>請選擇語言</option>
+                        <option value="en">英文</option>
+                        <option value="ja">日文</option>
+                        <option value="zh-Hant">中文</option>
+                        <option value="ko">韓文</option>
+                    </select>
+                </div>
+                <div class="card-body text-dark">
+                    <textarea id="text1" type="text" class="form-control" placeholder="請輸入翻譯文字">
+                        </textarea>
+                    <div style="margin-top: 10px;">
+                        <button id="ButtonTranslate" type="button" class="btn btn-secondary">翻譯</button></div>
+                </div>
+            </div>
+
+            <div class="card border-dark mb-3" style="max-width: 18rem; margin: 10px;">
+                <div class="card-header" style="height: 100px;">
+                    <label for="exampleFormControlSelect1">翻譯</label>
+                </div>
+                <div class="card-body text-dark">
+                    <textarea id="text2" type="text" class="form-control" placeholder="請輸入翻譯文字">
+                            </textarea>
+                    <div style="margin-top: 10px;">
+                        <button type="button" class="btn btn-secondary" id="switch">
+                            <->
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+</body>
+
+</html>

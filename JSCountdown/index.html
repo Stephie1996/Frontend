@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+    <script>
+       $(document).ready(function () {
+                init();
+            });
+
+            function init() {            
+                $('#ButtonStart').click(StartTime);
+                $('#ButtonStart').click(GetTime);
+                $('#ButtonPause').click(StopTime);
+            }        
+    
+            function StartTime() {
+                isPause = false;
+            }
+            
+            function GetTime() {
+                var t = $('#myTextarea').val();
+                if (t == 0) {
+                    alert('時間到');
+                    return;
+                }            
+                
+                else if (isPause == false) {
+                    t = t - 1;
+                    $('#myTextarea').val(t);
+                    setTimeout(GetTime, 1000);
+                }
+            }
+    
+            function StopTime() {
+                isPause = true;
+            }
+    </script>
+</head>
+
+
+
+<body>
+
+    <div class="row" style="margin: 10px">
+        <div class="col-6">
+            <input id="myTextarea" class="form-control" style="width: 180px">
+            <div><button type="button" class="btn btn-outline-info" id="ButtonStart">開始</button>
+                <button type="button" class="btn btn-outline-secondary" id="ButtonPause">暫停</button></div>
+        </div>
+    </div>
+
+</body>
+
+</html>

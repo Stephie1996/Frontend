@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script>
+        function SignIn() {
+            if (document.getElementById('MustCheck').checked) {
+                document.getElementById('Modal-Body').innerHTML = "登入成功";
+                $('#myModal').modal();
+            } else {
+                document.getElementById('Modal-Body').innerHTML = "請勾選同意本系統使用條款";
+                $('#myModal').modal();
+            }
+        }
+    </script>
+
+    <title>Login Modal</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-center">
+            <div class="row">
+                <div class="col">
+                    <div class="card" style="width: 500px">
+                        <div class="card-header bg-info text-white">註冊系統</div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-end">
+                                <a class="btn btn-danger" href="signup.html">註冊新帳號</a>
+                            </div>
+                            帳號:
+                            <input type="text" class="form-control" placeholder="請輪入姓名" name="Name">
+                            密碼:
+                            <input type="text" class="form-control" placeholder="請輪入密碼" name="Password">
+                            <div>
+                                </br>
+                                <input type="checkbox" name="Check" id="MustCheck">勾選我同意本系統<a href="#">使用條款</a>
+                                </br>
+                                <input id="btnSignIn"" type=" submit" class="btn bg-info text-white" value="登入"
+                                    onclick="SignIn()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">警告</h4>
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+
+                <!-- Modal body -->
+                <div id="Modal-Body" class="modal-body">登入成功</div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

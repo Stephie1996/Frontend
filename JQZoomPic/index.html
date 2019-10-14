@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+
+    <script>
+        function sel01_change() {
+            var val = $(this).val();
+            $('#ImgGroup2 img').removeClass();
+            $('#ImgGroup2 img').addClass(val);
+        }
+
+        $(function () {
+
+            $('img').hover(function () {
+                $(this).css("cursor", "pointer");
+                $(this).css("transform", "scale(1.1)").css("transition-duration", "0.1s");
+            }, function () {
+                $(this).css("transform", "scale(1)").css("transition-duration", "0.1s");
+
+            });
+
+            $('#sel01').change(sel01_change);
+        });
+
+        $(function () {
+            init();
+        });
+
+    </script>
+
+    <style>
+        .br15 {
+            border-radius: 15px;
+        }
+
+        .br30 {
+            border-radius: 30px;
+        }
+
+        .br50 {
+            border-radius: 50px;
+        }
+    </style>
+    <title>ZoomPic</title>
+</head>
+
+<body>
+    <div id="ImgGroup2" class="row" style="margin:10px; padding-top:100px">
+        <div class="col-12">
+            <select id="sel01">
+                <option value="br15">15px</option>
+                <option value="br30">30px</option>
+                <option value="br50">50px</option>
+            </select>
+        </div>
+        <div class="row">
+            <div class="col-4">
+                <img src="Images/1.jpg" style="width:100%" class="img-responsive" />
+            </div>
+            <div class="col-4">
+                <img src="Images/2.jpg" style="width:100%" class="img-responsive" />
+            </div>
+            <div class="col-4">
+                <img src="Images/3.jpg" style="width:100%" class="img-responsive" />
+            </div>
+        </div>
+        </br>
+        <div class="row">
+            <div class="col-4">
+                <img src="Images/4.jpg" style="width:100%" class="img-responsive" />
+            </div>
+            <div class="col-4">
+                <img src="Images/5.jpg" style="width:100%" class="img-responsive" />
+            </div>
+            <div class="col-4">
+                <img src="Images/6.jpg" style="width:100%" class="img-responsive" />
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

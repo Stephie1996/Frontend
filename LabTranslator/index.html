@@ -2,15 +2,14 @@
 <html lang="en">
 
 <head>
-    <title>Title</title>
+    <title>Translator</title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-     <!-- Optional JavaScript -->
+    <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-    </script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
         integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
     </script>
@@ -24,39 +23,53 @@
 </head>
 
 <script>
-    function whenSuccess(response) {
-        //呼叫遠端服務後的回傳結果
-        console.log(response);
-        $('#text2').val(response[0].translations[1].text);
-    }
+    //當頁面載入完成後
+    $(document).ready(function () {
+        document.getElementById('text1').innerHTML = "";
+        document.getElementById('text2').innerHTML = "";
+        $('#ButtonSwitch').click(ButtonSwitch);
+        $('#ButtonTranslate').click(ButtonTranslate)
+    });
 
     function ButtonTranslate() {
-        var source = $('#text1').val();
-        var LanguageOption = $('LanguageOption').val();
+        //保存最後服務回傳結果
+        localStorage.lastQuery = $('#text1').val();
+
+        let value = $("#LanguageOption").val();
+        let source = $('#text1').val();
+        console.log('text2 TEXT', $('#text1').val())
         $.ajax({
             type: "post", //http verb
             headers: {
                 //http header
-                "Ocp-Apim-Subscription-Key": "ea23947751b148409e4ea4a9c287c71c",
+                "Ocp-Apim-Subscription-Key": "8e15086662094d478de152a7688701d1",
                 "Content-Type": "application/json"
             },
-            url: `https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=${'LanguageOption'}`,
+            url: "https://api.cognitive.microsofttranslator.com/translate?api-version=3.0&to=en&to=ja&to=zh-Hant&to=ko",
+
             data: JSON.stringify([{
-                "Text": source //擁有Text的物件 轉成json字串
+                "Text": source
             }]), //要翻譯的文字
             dataType: "json",
-            success: whenSuccess
-            //success: function (response) {
-            //呼叫遠端服務後的回傳結果
-            //  console.log(response);
-            //$('#text2').val(response[0].translations[1].text);
-            //}
+            success: function (response) {
+                //呼叫遠端服務後的回傳結果
+                if (value == 1) {
+                    $('#text2').val(response[0].translations[0].text);
+                }
+                if (value == 2) {
+                    $('#text2').val(response[0].translations[1].text);
+                }
+                if (value == 3) {
+                    $('#text2').val(response[0].translations[2].text);
+                }
+                if (value == 4) {
+                    $('#text2').val(response[0].translations[3].text);
+                }
+            }
         });
     }
 
-    function whenSuccess(response) {
-        $('#text2').val(response[0].translations[1].text);
-    }
+
 
     function ButtonSwitch() {
         var left = $('#text1').val();
@@ -65,12 +78,6 @@
         $('#text1').val(right);
 
     }
-
-    //當頁面載入完成後
-    $(document).ready(function () {
-        $('#ButtonSwitch').click(ButtonSwitch);
-        $('#ButtonTranslate').click(ButtonTranslate)
-    });
 </script>
 
 <body>
@@ -81,10 +88,10 @@
                     <label for="exampleFormControlSelect1">翻譯</label>
                     <select class="form-control" id="LanguageOption">
                         <option value="0" selected>請選擇語言</option>
-                        <option value="en">英文</option>
-                        <option value="ja">日文</option>
-                        <option value="zh-Hant">中文</option>
-                        <option value="ko">韓文</option>
+                        <option value="1">英文</option>
+                        <option value="2">日文</option>
+                        <option value="3">中文</option>
+                        <option value="4">韓文</option>
                     </select>
                 </div>
                 <div class="card-body text-dark">
@@ -117,7 +124,7 @@
 
 
 
-   
+
 </body>
 
 </html>

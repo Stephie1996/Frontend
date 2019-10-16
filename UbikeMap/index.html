@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+                 * element that contains the map. */
+        #map {
+            height: 100%;
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    <script>
+        var map;
+
+        $(function () {
+
+        });
+
+        function initMap() {
+            var myLatLng = {
+                lat: 25.042246,
+                lng: 121.538262
+            };
+
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 15,
+                center: myLatLng
+            });
+
+            var marker = new google.maps.Marker({
+                position: myLatLng,
+                map: map,
+                title: '億光大樓'
+            });
+
+            //設定 icons 集合
+            var icons = {
+                ubike: {
+                    icon: 'bike.png'
+                },
+                bluebike: {
+                    icon: 'bike_blue.png'
+                }
+            };
+
+
+            //取得 Ubike 位置(經緯度)
+            var features = GetUbikeLocation();
+
+            function GetUbikeLocation() {
+                /* [
+                    {
+                position: new google.maps.LatLng(25.042246,121.538000),
+                type: 'ubike'
+            }
+            
+            ];*/
+
+                var data = [];
+                //呼叫 Opendata
+                var openData = GetOpendata();
+                console.log('Opendata is', openData);
+
+                //顯示&給予 每一個 item 的值
+                $.each(openData.retVal, function (i, item) {
+                    console.log('i is', i); // i 是 index
+                    console.log('item is', item); // item 是集合
+
+
+                    var singleItem = {
+                        position: new google.maps.LatLng(item.lat, item.lng),
+                        type: 'ubike',
+                        title: item.sbi +'/' + item.tot,
+                    };
+
+                    if (item.sbi < 10) {
+                       singleItem.type = 'bluebike';
+                    }
+                    //將資料加入 collection
+                    data.push(singleItem);
+                });
+                return data;
+            }
+
+
+
+            //取得 OpenData
+            function GetOpendata() {
+                var ubikelocation;
+                $.ajax({
+                    type: 'Get',
+                    url: 'https://tcgbusfs.blob.core.windows.net/blobyoubike/YouBikeTP.json',
+                    success: function (data) {
+                        ubikelocation = data;
+                        console.log('data is ', data);
+                    },
+                    error: function () {
+                        alert('fail');
+                    },
+                    async: false, //ajax是非同步方法 , 要讓它同步所以 false
+                });
+                return ubikelocation;
+            }
+
+            // Create markers.
+            for (var i = 0; i < features.length; i++) {
+                var marker = new google.maps.Marker({       //按照 Google Map 給的格式顯示
+                    position: features[i].position,         //讀取 features 位置資訊
+                    icon: icons[features[i].type].icon,     //讀取 icons 位置資訊
+                    map: map,                               //顯示 map
+                    title:features[i].title
+                });
+            };
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAlKWP4uWjQIR3WDAWLAu6rUhBfc3_ppag&callback=initMap"
+        async defer></script>
+</head>
+
+<body>
+
+    <body>
+            <nav class="navbar navbar-light bg-light">
+                    <a class="navbar-brand">Navbar</a>
+                    <form class="form-inline">
+                      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                      <button class="btn btn-outline-info my-2 my-sm-0" type="submit">Search</button>
+                    </form>
+                  </nav>
+        <div class="container" id="map"></div>
+
+    </body>
+
+
+    < /html>

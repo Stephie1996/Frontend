@@ -45,31 +45,40 @@
   <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
   <script>
     $(function () {
-
       $('#restart').click(abortGame);
       $('#start').click(startGame);
       $('#cheat').click(showAnswer);
       $('#guess').click(doGuess);
     });
 
-    function startGame() {
-      document.getElementById('guessResults').innerHTML = "";
-      document.getElementById('userguess').innerHTML = "";
-      var result;
-      var answer = Math.floor(MAth.random() * 10);
+    var answer = ""; //先將畫面清空
 
-      while (i = 0, i < 4, i++) {
-        if (answer.indexOf[i] == -1) {
-          result += answer;
+    /*開始遊戲*/
+    function startGame() {
+      clearAll()
+
+      while (answer.length < 4) { //當answer長度 <4 = true
+        var number = Math.floor(Math.random() * 10); //跑出整數亂數
+        if (answer.indexOf(number) == -1) { //如果數字沒有重複則加入 answer
+          answer += number;
         }
       }
-      return result;
+      return answer;
     }
 
 
+    /*清空*/
+    function clearAll() {
+      document.getElementById('guessResults').innerHTML = "";
+      document.getElementById('userGuess').innerHTML = "";
+    }
+
+    /*重新*/
     function abortGame() {
       startGame();
     }
+
+    /*顯示答案*/
     function showAnswer() {
       alert(answer);
       startGame();
@@ -77,10 +86,24 @@
 
 
 
-
+    /*猜數字判斷*/
     function doGuess() {
+      var userText = ('#userGuess').val();
+      if (userText.TextLength != 4) {
+        alert("請輸入四個數字");
+      } else if (userText == answer) {
+        $('#guessResults').append(
+          `<li class="list-group-item"><span class="label label-success">${result}</span>` + $('#userGuess').val() +
+          '</li>');
+        clearAll();
+        alert("遊戲成功");
+        while (userText.Length < 4) {
 
-
+        }
+      } else {
+        $('#guessResults').append(`<li class="list-group-item"><span class="label label-danger">${result}</span>` + $(
+          '#userGuess').val() + '</li>');
+      }
     }
   </script>
 

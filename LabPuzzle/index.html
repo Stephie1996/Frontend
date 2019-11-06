@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+    </script>
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <p>原圖：</p>
+
+            <img id="tulip" src="1.jpg" style="margin-left:0px;" width="300" height="300" />
+
+            <p>Canvas:</p>
+            <canvas id="myCanvas" width="300" height="300" style="border:3px #cccccc dashed;">
+            </canvas>
+        </div>
+        <div class="row">
+            <select id="gameLevel" class="browser-default custom-select">
+                <option selected value="3">簡單</option>
+                <option value="4">中度</option>
+                <option value="5">難</option>
+            </select>
+            <button type="button" class="btn btn-info">開始</button>
+
+        </div>
+    </div>
+
+    <script>
+        var img = document.getElementById('tulip');
+        var level = document.getElementById("gameLevel").value
+        var width = img.clientWidth / level;
+        var height = img.clientHeight / level;
+
+
+
+        console.log(width)
+        console.log(height)
+        console.log(level)
+
+
+        document.getElementById("tulip").onload = function () {
+            var c = document.getElementById("myCanvas");
+            var ctx = c.getContext("2d");
+
+            var img = document.getElementById("tulip");
+            var cell1 = ctx.drawImage(img, 0, 0, 100, 100, 0, 0, 100, 100); //1
+            var cell2 = ctx.drawImage(img, 100, 0, 100, 100, 100, 0, 100, 100); //2
+            var cell3 = ctx.drawImage(img, 200, 0, 100, 100, 200, 0, 100, 100); //3
+            var cell4 = ctx.drawImage(img, 0, 100, 100, 100, 0, 100, 100, 100); //4
+            var cell5 = ctx.drawImage(img, 100, 100, 100, 100, 100, 100, 100, 100); //5
+            var cell6 = ctx.drawImage(img, 200, 100, 100, 100, 200, 100, 100, 100); //6
+            var cell7 = ctx.drawImage(img, 0, 200, 100, 100, 0, 200, 100, 100); //7
+            var cell8 = ctx.drawImage(img, 100, 200, 100, 100, 100, 200, 100, 100); //8
+            //var cell9 = ctx.drawImage(img, 200, 200, 100, 100, 200, 200, 100, 100); //9
+            ctx.strokeStyle = '#fff'; // some color/style
+            ctx.lineWidth = 1; // thickness
+            ctx.strokeRect( 0, 0, 100, 100, 0, 0, 100, 100); //1
+            ctx.strokeRect( 100, 0, 100, 100, 100, 0, 100, 100); //2
+            ctx.strokeRect( 200, 0, 100, 100, 200, 0, 100, 100); //3
+            ctx.strokeRect( 0, 100, 100, 100, 0, 100, 100, 100); //4
+            ctx.strokeRect( 100, 100, 100, 100, 100, 100, 100, 100); //5
+            ctx.strokeRect( 200, 100, 100, 100, 200, 100, 100, 100); //6
+            ctx.strokeRect( 0, 200, 100, 100, 0, 200, 100, 100); //7
+            ctx.strokeRect( 100, 200, 100, 100, 100, 200, 100, 100); //8
+            ctx.strokeRect( 200, 200, 100, 100, 200, 200, 100, 100); //9
+        };
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <title>Calendar</title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
+  </script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
+  </script>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+  <script>
+    $(function () {
+      dayStart();
+      refreshDate();
+      daysMonth();
+    });
+
+    var month_olympic = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    var month_normal = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    var month_name = ["January", "Febrary", "March", "April", "May", "June", "July", "Auguest", "September", "October",
+      "November", "December"
+    ];
+
+
+
+    var holder = document.getElementById("days");
+    var prev = document.getElementById("prev");
+    var next = document.getElementById("next");
+    var ctitle = document.getElementById("calendar-title");
+    var cyear = document.getElementById("calendar-year");
+
+
+
+    function dayStart(month, year) {
+      var tmpDate = new Date(year, month, 1);
+      return (tmpDate.getDay());
+    }
+    console.log('tmpDate', tmpDate)
+
+    function daysMonth(month, year) {
+      var tmp = year % 4;
+      if (tmp == 0) {
+        return (month_olympic[month]);
+      } else {
+        return (month_normal[month]);
+      }
+    }
+
+    function getCountDays() {
+      var curDate = new Date();
+      /* 获取当前月份 */
+      var curYear = curDate.getFullYear();
+      var curMonth = curDate.getMonth();
+      var curDay = curDate.getDate();
+      /*  生成实际的月份: 由于curMonth会比实际月份小1, 故需加1 */
+      curDate.setMonth(curMonth + 1);
+      /* 将日期设置为0, 这里为什么要这样设置, 我不知道原因, 这是从网上学来的 */
+      curDate.setDate(0);
+      /* 返回当月的天数 */
+      return curDate.getDate();
+    }
+    var totalDay = getCountDays();
+
+    console.log(" totalDay", totalDay)
+
+    prev.onclick = function (e) {
+      e.preventDefault();
+      curMonth--;
+      if (curMonth < 0) {
+        curYear--;
+        curMonth = 11;
+      }
+      refreshDate();
+    }
+    next.onclick = function (e) {
+      e.preventDefault();
+      curMonth++;
+      if (curMonth > 11) {
+        curYear++;
+        curMonth = 0;
+      }
+      refreshDate();
+    }
+
+    function refreshDate() {
+      var str = "";
+      var totalDay = daysMonth(curMonth, curYear); //获取该月总天数
+      var firstDay = dayStart(curMonth, curYear); //获取该月第一天是星期几
+      var myclass;
+      let date = 1;
+      for (let i = 0; i < 6; i++) {
+        // creates a table row
+        let row = document.createElement("tr");
+
+        //creating individual cells, filing them up with data.
+        for (let j = 0; j < 7; j++) {
+          if (i === 0 && j < firstDay) {
+            cell = document.createElement("td");
+            cellText = document.createTextNode("");
+            cell.appendChild(cellText);
+            row.appendChild(cell);
+          } else if (date > daysInMonth(month, year)) {
+            break;
+          } else {
+            cell = document.createElement("td");
+            cellText = document.createTextNode(date);
+            cell.appendChild(cellText);
+            row.appendChild(cell);
+            date++;
+          }
+
+
+        }
+
+        tbl.appendChild(row); // appending each row into calendar body.
+      }
+
+    }
+    refreshDate(); //执行该函数
+  </script>
+
+</head>
+
+<body>
+  <div class="container">
+    <table id="tb1" class="table table-bordered" style="margin-top: 50px;">
+      <thead>
+
+        <tr>
+          <td colspan="7">
+            <button class="btn info" style="border-radius: 50%;">+</button>
+            <div class="row justify-content-around">
+              <button id="prev" type="button" class="btn btn-link" style="text-decoration: none;">
+                < </button> <h1 class="green" id="calendar-title">Month</h1>
+                  <button id="next" type="button" class="btn btn-link" style="text-decoration: none;">
+                    >
+                  </button>
+                  <h5 class="green" id="calendar-year">Year</h5>
+            </div>
+          </td>
+        </tr>
+
+        <tr style="text-align: center;">
+          <td class="title">Sun</td>
+          <td class="title">Mon</td>
+          <td class="title">Tue</td>
+          <td class="title">Wed</td>
+          <td class="title">Thu</td>
+          <td class="title">Fri</td>
+          <td class="title">Sat</td>
+        </tr>
+      </thead>
+      <div class="row">
+        <tr class="date">
+        </tr>
+      </div>
+    </table>
+  </div>
+
+
+</body>
+
+</html>

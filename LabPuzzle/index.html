@@ -1,91 +1,238 @@
-<!doctype html>
 <html lang="en">
 
 <head>
-    <title>Title</title>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PUZZLE</title>
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-    </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
-    </script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
-    </script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <style>
+        #dvPuzzle {
+            width: 310px;
+            height: 310px;
+            border: dashed 5px gray;
+            padding: 0px;
+        }
 
+        .PicCell {
+            border-top: solid 1px white;
+            border-left: solid 1px white;
+            border-right: solid 1px gray;
+            border-bottom: solid 1px gray;
+            float: left;
+            overflow: hidden;
+        }
+    </style>
+    <script>
+        var Level = 3;
+        var Size;
+        var posConv = [];
+        var temppos = [];
+        var saveLost;
+
+        $(document).ready(function () {
+            selectPuzzle(Level);
+            $('#selectLevel').change(function (e) {
+                Level = $('#selectLevel').val();
+                selectPuzzle(Level);
+            });
+        });
+
+        function selectPuzzle(Sidelength) {
+            //移除上一個圖
+            $('#dvPuzzle .PicCell').remove();
+            for (let i = 0; i < Sidelength * Sidelength; i++) {
+                Size = 300 / Sidelength;
+                //動態生成
+                $("#dvPuzzle").append(`
+                <div class='PicCell' id='Pic${i}' style="width:${Size}px;height:${Size}px;">
+                <img width="300px" height="300px" src='1.jpg'>
+                </div>`);
+                //console.log('id is' ,i);
+                //console.log('Sidelength is',Sidelength);
+                //分別為格子給予X,Y
+                let row = parseInt(i / Sidelength);
+                //console.log('row is',row);
+                let col = i % Sidelength;
+                //console.log('col is',col);
+                //顯示9張圖，排列位置
+                $(`#Pic${i} img`).css("margin-left", col * -Size).css("margin-top", row * -Size);
+                //給陣列列和柱
+                posConv[i] = {
+                    row: row,
+                    col: col
+                };
+                //排序陣列編號
+                temppos[i] = `Pic${i}`;
+            }
+            //console.log(posConv);
+            //console.log(temppos);
+            //移除最後一格
+            saveLost = $(`#Pic${Level * Level - 1} img`)
+            //$(`#Pic${Level * Level - 1} img`).remove();
+            saveLost.remove();
+            //移動
+            $(".PicCell").click(ImgToMove);
+            //亂數洗牌
+            $("input:button").click(RandomButton);
+        }
+
+        function ImgToMove() {
+            //點圖
+            let cells = $("#dvPuzzle div");
+            //console.log('cells',cells);
+            //抓圖的索引直
+            let i = cells.index(this);
+            //console.log('cells.index', i);
+            let toCheck = getNearPos(i, Level);
+            //console.log('getNearPos(i, Level)', toCheck);
+            while (toCheck.length > 0) {
+                //pop方法會移除陣列中的最後一個元素，並將該值回傳給呼叫者
+                let j = toCheck.pop();
+                //console.log('toCheck.pop() is', j);
+                //eq(index) 方法将匹配元素集缩减值指定 index 上的一个
+                //console.log(cells.eq(j).attr("id"));
+                //console.log(`Pic${Level * Level - 1}`)
+                //判斷是否為空白，存放交換位置
+                if (cells.eq(j).attr("id") == `Pic${Level * Level - 1}`) {
+                    if (i > j) {
+                        let k = j;
+                        j = i;
+                        i = k;
+                    }
+                    //實際交換
+                    let ahead = cells.eq(i);
+                    let behind = cells.eq(j);
+                    //prev()收尋
+                    let behindPrev = behind.prev();
+                    //.after（函數）函數（整數索引）
+                    if (Math.abs(i - j) == 1) {
+                        behind.after(ahead);
+                    } else {
+                        ahead.after(behind);
+                        behindPrev.after(ahead);
+                    }
+                }
+            }
+            checkwin();
+        }
+        //判斷能不能移動//0移動
+        function getNearPos(i, Sidelength) {
+            let pool = [];
+            let row = posConv[i].row,
+                col = posConv[i].col;
+            // console.log(`row:${row} col:${col}`);
+            if (row > 0)
+                pool.push((row - 1) * Sidelength + col);
+            if (row < Sidelength - 1)
+                pool.push((row + 1) * Sidelength + col);
+            if (col > 0)
+                pool.push(i - 1);
+            if (col < Sidelength - 1)
+                pool.push(i + 1);
+            //console.log(pool);
+            return pool;
+        }
+
+        function checkwin() {
+            //創建成功時的陣列
+            let check = [];
+            for (let i = 0; i < $('.PicCell').length; i++) {
+                check.push($('.PicCell')[i]['id']);
+            }
+            //比對陣列是否一樣
+            if (check.toString() == temppos.toString()) {
+                $('#modal').modal();
+                //關閉功能
+                $(".PicCell").off("click");
+                $("input:button").off("click");
+                //加入最後一張圖
+                $(`#Pic${Level * Level - 1}`).append(saveLost);
+            }
+        }
+        //亂數
+        function RandomButton() {
+            for (let i = 0; i < 500; i++) {
+                let cells = $("#dvPuzzle div");
+                let toMove = getNearPos(cells.index($(`#Pic${Level * Level - 1}`)[0]), Level);
+                cells.eq(toMove[parseInt(Math.random() * toMove.length)]).click();
+            }
+        }
+    </script>
 </head>
 
 <body>
     <div class="container">
-        <div class="row">
-            <p>原圖：</p>
-
-            <img id="tulip" src="1.jpg" style="margin-left:0px;" width="300" height="300" />
-
-            <p>Canvas:</p>
-            <canvas id="myCanvas" width="300" height="300" style="border:3px #cccccc dashed;">
-            </canvas>
+            <label>原圖 : </label>
+        <div class="d-flex justify-content-around">
+            <img width="300" height="300" style="margin:10px" src="1.jpg">
+        </div>
+        <label>拼圖 : </label>  
+        <div class="d-flex justify-content-around">
+            <img alt="" src="" srcset="" sizes="600">
+            <div class="dvPuzzle container-fluid" id="dvPuzzle">
+                <div class="PicCell" id="Pic0" style="width:100px;height:100px;">
+                    <img width="300" height="300" style="margin-top: 0px; margin-left: 0px;" src="1.jpg">
+                </div>
+                <div class="PicCell" id="Pic1" style="width:100px;height:100px;">
+                    <img width="300" height="300" style="margin-top: 0px; margin-left: -100px;" src="1.jpg">
+                </div>
+                <div class="PicCell" id="Pic2" style="width:100px;height:100px;">
+                    <img width="300" height="300" style="margin-top: 0px; margin-left: -200px;" src="1.jpg">
+                </div>
+                <div class="PicCell" id="Pic3" style="width:100px;height:100px;">
+                    <img width="300" height="300" style="margin-top: -100px; margin-left: 0px;" src="1.jpg">
+                </div>
+                <div class="PicCell" id="Pic4" style="width:100px;height:100px;">
+                    <img width="300" height="300" style="margin-top: -100px; margin-left: -100px;" src="1.jpg">
+                </div>
+                <div class="PicCell" id="Pic5" style="width:100px;height:100px;">
+                    <img width="300" height="300" style="margin-top: -100px; margin-left: -200px;" src="1.jpg">
+                </div>
+                <div class="PicCell" id="Pic6" style="width:100px;height:100px;">
+                    <img width="300" height="300" style="margin-top: -200px; margin-left: 0px;" src="1.jpg">
+                </div>
+                <div class="PicCell" id="Pic7" style="width:100px;height:100px;">
+                    <img width="300" height="300" style="margin-top: -200px; margin-left: -200px;" src="1.jpg">
+                </div>
+                <div class="PicCell" id="Pic8" style="width:100px;height:100px;">
+                </div>
+            </div>
         </div>
         <div class="row">
-            <select id="gameLevel" class="browser-default custom-select">
-                <option selected value="3">簡單</option>
-                <option value="4">中度</option>
-                <option value="5">難</option>
-            </select>
-            <button type="button" class="btn btn-info">開始</button>
-
+            <div class="col-4 col-xs-4 col-sm-4 col-md-4 col-lg-4 offset-4 text-center ">
+                <select name="Level" class="form-control  my-2" id="selectLevel">
+                    <option value="3" selected="">簡單</option>
+                    <option value="4">中等</option>
+                    <option value="5">高難</option>
+                </select>
+                <input name="gamestat" class="btn btn-secondary  my-2" id="gamestat" type="button" value="START">
+            </div>
+        </div>
+    </div>
+    <div tabindex="-1" class="modal fade" id="modal" role="dialog" aria-hidden="true"
+        aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <span>過關</span>
+                    <button class="close" aria-label="Close" type="button" data-dismiss="modal">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <script>
-        var img = document.getElementById('tulip');
-        var level = document.getElementById("gameLevel").value
-        var width = img.clientWidth / level;
-        var height = img.clientHeight / level;
-
-
-
-        console.log(width)
-        console.log(height)
-        console.log(level)
-
-
-        document.getElementById("tulip").onload = function () {
-            var c = document.getElementById("myCanvas");
-            var ctx = c.getContext("2d");
-
-            var img = document.getElementById("tulip");
-            var cell1 = ctx.drawImage(img, 0, 0, 100, 100, 0, 0, 100, 100); //1
-            var cell2 = ctx.drawImage(img, 100, 0, 100, 100, 100, 0, 100, 100); //2
-            var cell3 = ctx.drawImage(img, 200, 0, 100, 100, 200, 0, 100, 100); //3
-            var cell4 = ctx.drawImage(img, 0, 100, 100, 100, 0, 100, 100, 100); //4
-            var cell5 = ctx.drawImage(img, 100, 100, 100, 100, 100, 100, 100, 100); //5
-            var cell6 = ctx.drawImage(img, 200, 100, 100, 100, 200, 100, 100, 100); //6
-            var cell7 = ctx.drawImage(img, 0, 200, 100, 100, 0, 200, 100, 100); //7
-            var cell8 = ctx.drawImage(img, 100, 200, 100, 100, 100, 200, 100, 100); //8
-            //var cell9 = ctx.drawImage(img, 200, 200, 100, 100, 200, 200, 100, 100); //9
-            ctx.strokeStyle = '#fff'; // some color/style
-            ctx.lineWidth = 1; // thickness
-            ctx.strokeRect( 0, 0, 100, 100, 0, 0, 100, 100); //1
-            ctx.strokeRect( 100, 0, 100, 100, 100, 0, 100, 100); //2
-            ctx.strokeRect( 200, 0, 100, 100, 200, 0, 100, 100); //3
-            ctx.strokeRect( 0, 100, 100, 100, 0, 100, 100, 100); //4
-            ctx.strokeRect( 100, 100, 100, 100, 100, 100, 100, 100); //5
-            ctx.strokeRect( 200, 100, 100, 100, 200, 100, 100, 100); //6
-            ctx.strokeRect( 0, 200, 100, 100, 0, 200, 100, 100); //7
-            ctx.strokeRect( 100, 200, 100, 100, 100, 200, 100, 100); //8
-            ctx.strokeRect( 200, 200, 100, 100, 200, 200, 100, 100); //9
-        };
-    </script>
 
 </body>
 

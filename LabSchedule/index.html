@@ -60,22 +60,23 @@
 
     function getCountDays() {
       var curDate = new Date();
-      /* 获取当前月份 */
+      /* 獲取當前月份 */
       var curYear = curDate.getFullYear();
       var curMonth = curDate.getMonth();
       var curDay = curDate.getDate();
-      /*  生成实际的月份: 由于curMonth会比实际月份小1, 故需加1 */
+      /*  生成實際的月份: 由於curMonth會比實際月份小1, 故需加1 */
       curDate.setMonth(curMonth + 1);
-      /* 将日期设置为0, 这里为什么要这样设置, 我不知道原因, 这是从网上学来的 */
+      /* 將日期設為0 */
       curDate.setDate(0);
-      /* 返回当月的天数 */
+      /* 返回當月的天数 */
       return curDate.getDate();
     }
     var totalDay = getCountDays();
 
     console.log(" totalDay", totalDay)
 
-    prev.onclick = function (e) {
+
+    $("#prev").onclick = function (e) {
       e.preventDefault();
       curMonth--;
       if (curMonth < 0) {
@@ -84,7 +85,7 @@
       }
       refreshDate();
     }
-    next.onclick = function (e) {
+    $("#next").onclick = function (e) {
       e.preventDefault();
       curMonth++;
       if (curMonth > 11) {
@@ -96,8 +97,8 @@
 
     function refreshDate() {
       var str = "";
-      var totalDay = daysMonth(curMonth, curYear); //获取该月总天数
-      var firstDay = dayStart(curMonth, curYear); //获取该月第一天是星期几
+      var totalDay = daysMonth(curMonth, curYear); //獲取該月總天數
+      var firstDay = dayStart(curMonth, curYear); //獲取該月第一天是星期幾
       var myclass;
       let date = 1;
       for (let i = 0; i < 6; i++) {
@@ -128,13 +129,13 @@
       }
 
     }
-    refreshDate(); //执行该函数
+    refreshDate(); //執行該函數
   </script>
 
 </head>
 
 <body>
-  <div class="container">
+  <div class="container" style="margin: 50px;">
     <table id="tb1" class="table table-bordered" style="margin-top: 50px;">
       <thead>
 
@@ -143,16 +144,16 @@
             <button class="btn info" style="border-radius: 50%;">+</button>
             <div class="row justify-content-around">
               <button id="prev" type="button" class="btn btn-link" style="text-decoration: none;">
-                < </button> <h1 class="green" id="calendar-title">Month</h1>
+                < </button> <h1 class="green" id="calendar-month">11</h1>
                   <button id="next" type="button" class="btn btn-link" style="text-decoration: none;">
                     >
                   </button>
-                  <h5 class="green" id="calendar-year">Year</h5>
+                  <h5 class="green" id="calendar-year">2019</h5>
             </div>
           </td>
         </tr>
 
-        <tr style="text-align: center;">
+        <tr class="top" style="text-align: center;">
           <td class="title">Sun</td>
           <td class="title">Mon</td>
           <td class="title">Tue</td>
